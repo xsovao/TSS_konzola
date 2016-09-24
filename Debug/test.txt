@@ -1,0 +1,280 @@
+
+Search:
+
+    Reference
+    <istream>
+    istream
+    read
+
+Not logged in
+register
+log in
+public member function
+<istream> <iostream>
+std::istream::read
+
+istream& read (char* s, streamsize n);
+
+Read block of data
+Extracts n characters from the stream and stores them in the array pointed to by s.
+
+This function simply copies a block of data, without checking its contents nor appending a null character at the end.
+
+If the input sequence runs out of characters to extract (i.e., the end-of-file is reached) before n characters have been successfully read, the array pointed to by s contains all the characters read until that point, and both the eofbit and failbit flags are set for the stream.
+
+Internally, the function accesses the input sequence by first constructing a sentry object (with noskipws set to true). Then (if good), it extracts characters from its associated stream buffer object as if calling its member functions sbumpc or sgetc, and finally destroys the sentry object before returning.
+
+The number of characters successfully read and stored by this function can be accessed by calling member gcount.
+
+Parameters
+
+s
+    Pointer to an array where the extracted characters are stored.
+n
+    Number of characters to extract.
+    streamsize is a signed integral type.
+
+
+Return Value
+The istream object (*this).
+
+Errors are signaled by modifying the internal state flags:
+flag	error
+eofbit	The function stopped extracting characters because the input sequence has no more characters available (end-of-file reached).
+failbit	Either the function could not extract n characters or the construction of sentry failed.
+badbit	Error on stream (such as when this function catches an exception thrown by an internal operation).
+When set, the integrity of the stream may have been affected.
+Multiple flags may be set by a single operation.
+
+If the operation sets an internal state flag that was registered with member exceptions, the function throws an exception of member type failure.
+
+Example
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+
+	
+
+// read a file into memory
+#include <iostream>     // std::cout
+#include <fstream>      // std::ifstream
+
+int main () {
+
+  std::ifstream is ("test.txt", std::ifstream::binary);
+  if (is) {
+    // get length of file:
+    is.seekg (0, is.end);
+    int length = is.tellg();
+    is.seekg (0, is.beg);
+
+    char * buffer = new char [length];
+
+    std::cout << "Reading " << length << " characters... ";
+    // read data as a block:
+    is.read (buffer,length);
+
+    if (is)
+      std::cout << "all characters read successfully.";
+    else
+      std::cout << "error: only " << is.gcount() << " could be read";
+    is.close();
+
+    // ...buffer contains the entire file...
+
+    delete[] buffer;
+  }
+  return 0;
+}
+
+	
+Edit & Run
+
+
+Possible output:
+
+Reading 640 characters... all characters read successfully.
+
+
+Data races
+Modifies the elements in the array pointed to by s and the stream object.
+Concurrent access to the same stream object may cause data races, except for the standard stream object cin when this is synchronized with stdio (in this case, no data races are initiated, although no guarantees are given on the order in which extracted characters are attributed to threads).
+
+Exception safety
+Basic guarantee: if an exception is thrown, the object is in a valid state.
+It throws an exception of member type failure if the resulting error state flag is not goodbit and member exceptions was set to throw for that state.
+Any exception thrown by an internal operation is caught and handled by the function, setting badbit. If badbit was set on the last call to exceptions, the function rethrows the caught exception.
+
+See also
+
+istream::get
+    Get characters (public member function )
+
+istream::readsome
+    Read data available in buffer (public member function )
+
+istream::operator>>
+    Extract formatted input (public member function )
+
+C++
+
+    Information
+    Tutorials
+    Reference
+    Articles
+    Forum
+
+Reference
+
+    C library:
+        <cassert> (assert.h)
+        <cctype> (ctype.h)
+        <cerrno> (errno.h)
+        <cfenv> (fenv.h)
+        <cfloat> (float.h)
+        <cinttypes> (inttypes.h)
+        <ciso646> (iso646.h)
+        <climits> (limits.h)
+        <clocale> (locale.h)
+        <cmath> (math.h)
+        <csetjmp> (setjmp.h)
+        <csignal> (signal.h)
+        <cstdarg> (stdarg.h)
+        <cstdbool> (stdbool.h)
+        <cstddef> (stddef.h)
+        <cstdint> (stdint.h)
+        <cstdio> (stdio.h)
+        <cstdlib> (stdlib.h)
+        <cstring> (string.h)
+        <ctgmath> (tgmath.h)
+        <ctime> (time.h)
+        <cuchar> (uchar.h)
+        <cwchar> (wchar.h)
+        <cwctype> (wctype.h)
+    Containers:
+        <array>
+        <deque>
+        <forward_list>
+        <list>
+        <map>
+        <queue>
+        <set>
+        <stack>
+        <unordered_map>
+        <unordered_set>
+        <vector>
+    Input/Output:
+        <fstream>
+        <iomanip>
+        <ios>
+        <iosfwd>
+        <iostream>
+        <istream>
+        <ostream>
+        <sstream>
+        <streambuf>
+    Multi-threading:
+        <atomic>
+        <condition_variable>
+        <future>
+        <mutex>
+        <thread>
+    Other:
+        <algorithm>
+        <bitset>
+        <chrono>
+        <codecvt>
+        <complex>
+        <exception>
+        <functional>
+        <initializer_list>
+        <iterator>
+        <limits>
+        <locale>
+        <memory>
+        <new>
+        <numeric>
+        <random>
+        <ratio>
+        <regex>
+        <stdexcept>
+        <string>
+        <system_error>
+        <tuple>
+        <typeindex>
+        <typeinfo>
+        <type_traits>
+        <utility>
+        <valarray>
+
+<istream>
+
+    class templates:
+        basic_iostream
+        basic_istream
+    classes:
+        iostream
+        istream
+        wiostream
+        wistream
+    manipulators:
+        ws
+
+istream
+
+    istream::istream
+    istream::~istream
+    member classes:
+        istream::sentry
+    member functions:
+        istream::gcount
+        istream::get
+        istream::getline
+        istream::ignore
+        istream::operator>>
+        istream::peek
+        istream::putback
+        istream::read
+        istream::readsome
+        istream::seekg
+        istream::sync
+        istream::tellg
+        istream::unget
+    non-member overloads:
+        operator>> (istream)
+    protected members:
+        istream::operator=
+        istream::swap
+
+Home page | Privacy policy
+© cplusplus.com, 2000-2016 - All rights reserved - v3.1
+Spotted an error? contact us
